@@ -1,15 +1,38 @@
 import { AutoSizer, List } from "react-virtualized";
+import { connect } from "react-redux";
+import { useState } from "react";
 import GridManager from "../../components/GridManager";
 import { imgLoader } from "../../utility";
 import Toolbar from "../../components/Toolbar";
+import SelectWithTooltip from "../../components/SelectWithTooltip";
+import ViewSelector from "../../components/ViewSelector";
+import { setSize } from "../../slices/photoSlice";
 
-const PhotoContainer = () => {
+const PhotoContainer = ({ size, setSize }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+
   const config = {
-    containerWidth: window.innerWidth,
-    contentGap: 5,
-    idealHeight: 200,
-    range: 50,
-    segmentGap: 10,
+    small: {
+      containerWidth: window.innerWidth,
+      contentGap: 5,
+      idealHeight: 100,
+      range: 20,
+      segmentGap: 10,
+    },
+    middle: {
+      containerWidth: window.innerWidth,
+      contentGap: 5,
+      idealHeight: 200,
+      range: 50,
+      segmentGap: 10,
+    },
+    large: {
+      containerWidth: window.innerWidth,
+      contentGap: 5,
+      idealHeight: 400,
+      range: 50,
+      segmentGap: 10,
+    },
   };
 
   const rowRenderer =
@@ -31,7 +54,7 @@ const PhotoContainer = () => {
               <div
                 key={index}
                 style={{
-                  marginLeft: index === 0 ? 0 : config.contentGap,
+                  marginLeft: index === 0 ? 0 : config[size].contentGap,
                   width: item.displayWidth,
                   height: item.displayHeight,
                 }}
@@ -60,20 +83,38 @@ const PhotoContainer = () => {
           </div>
         }
         right={
-          <div
-            style={{
-              width: 104,
-              height: 30,
-              padding: "0px 4px 0px 10px",
-              border: "1px solid rgb(138, 184, 224)",
-              borderRadius: "4px",
-              display: "flex",
-              alignItems: "center",
-              fontSize: "14px",
+          <SelectWithTooltip
+            showTooltip={showTooltip}
+            closeTooltip={() => {
+              setShowTooltip(false);
             }}
+            text={
+              <div
+                style={{
+                  width: 104,
+                  height: 30,
+                  padding: "0px 4px 0px 10px",
+                  border: "1px solid rgb(138, 184, 224)",
+                  borderRadius: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  fontSize: "14px",
+                }}
+                onClick={() => {
+                  setShowTooltip(true);
+                }}
+              >
+                檢視
+              </div>
+            }
           >
-            檢視
-          </div>
+            <ViewSelector
+              size={size}
+              changeSize={(val) => {
+                setSize(val);
+              }}
+            />
+          </SelectWithTooltip>
         }
       />
       <AutoSizer>
@@ -81,8 +122,8 @@ const PhotoContainer = () => {
           return (
             width && (
               <GridManager
-                config={{ ...config, containerWidth: width }}
-                renderKey={width}
+                config={{ ...config[size], containerWidth: width }}
+                renderKey={`${width}-${size}`}
               >
                 {({ data, registerList }) => {
                   return (
@@ -105,4 +146,13 @@ const PhotoContainer = () => {
   );
 };
 
-export default PhotoContainer;
+export default connect(
+  (state) => ({
+    size: state.photo.size,
+  }),
+  (dispatch) => ({
+    setSize: (val) => {
+      dispatch(setSize(val));
+    },
+  })
+)(PhotoContainer);

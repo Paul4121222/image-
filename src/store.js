@@ -6,6 +6,7 @@ const store = configureStore({
   // Automatically calls `combineReducers`
   reducer: {
     album,
+    photo,
   },
 });
 
