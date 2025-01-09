@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Redirect } from "react-router-dom";
 import SideBarContainer from "./container/SidebarContainer";
 import AlbumContainer from "./container/AlbumContainer";
 import PhotoContainer from "./container/PhotoContainer";
@@ -12,6 +12,7 @@ const Main = () => {
         <Route path="/" element={<PhotoContainer />} />
         <Route path="/album" element={<AlbumContainer />} />
         <Route path="/trash" element={<TrashContainer />} />
+        <Redirect path="/" />
       </Routes>
     </div>
   );
