@@ -7,7 +7,6 @@ const map = req.keys().reduce((acc, item) => {
     [name]: item,
   };
 }, {});
-
 export const imgLoader = (name) => {
   return req(map[name]).default;
 };
