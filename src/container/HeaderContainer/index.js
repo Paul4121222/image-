@@ -22,6 +22,7 @@ const HeaderContainer = () => {
         height={36}
         iconWidth={24}
         iconHeight={24}
+        hasHoverEffect
       />
     </div>
   );

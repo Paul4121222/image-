@@ -16,16 +16,19 @@ const ButtonContainer = styled(CleanButton)`
 `;
 
 const IconContainer = styled(CleanButton)`
-  width: ${({ width }) => `${width}px`};
-  height: ${({ height }) => `${height}px`};
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: ${({ width }) => `${width / 2}px`};
-
-  &:hover {
-    background: #f4faff;
-  }
+  ${({ hasHoverEffect, width, height }) =>
+    hasHoverEffect &&
+    `
+    width: ${width}px;
+    height: ${height}px;
+    border-radius: ${width / 2}px;
+    &:hover {
+      background: #f4faff;
+    }
+  `}
 `;
 
 const Button = ({
