@@ -1,5 +1,5 @@
-import { imgLoader } from "../../utility";
 import Button from "../../components/Button";
+import Icon from "../../components/Icon";
 const HeaderContainer = () => {
   return (
     <div
@@ -11,9 +11,10 @@ const HeaderContainer = () => {
         backgroundColor: "rgb(232, 233, 235)",
       }}
     >
-      <img src={imgLoader("logo.jpg")} height={50} width={50} />
+      <Icon name="fill_logo" height={40} width={40} />
       <h2 style={{ margin: "0 0 0 24px" }}>PhotoHub</h2>
       <div style={{ flexGrow: 1 }} />
+      <Icon name="fill_upload" width={24} height={24} />
       <Button
         buttonType="icon"
         iconName="fill_more"
