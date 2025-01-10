@@ -3,7 +3,7 @@ import { getIconPath } from "./iconLoader";
 
 const Icon = ({ name, width = 20, height = 20, style }) => {
   return (
-    <span>
+    <span style={{ display: "inline-flex" }}>
       <SVG
         src={getIconPath(name)}
         width={width}

@@ -30,7 +30,7 @@ const SideBarContainer = () => {
           height: 100%;
           border-right: 1px solid #eee;
           width: 68px;
-          background: #fff;
+          background-color: rgb(232, 233, 235);
           transition: width 0.25s cubic-bezier(0.39, 0.58, 0.57, 1);
           display: flex;
           flex-direction: column;
@@ -38,7 +38,7 @@ const SideBarContainer = () => {
 
           &:hover {
             width: 200px;
-            transition-delay: 0.25s;
+            transition-delay: 0.15s;
 
             .name {
               white-space: pre-line;
