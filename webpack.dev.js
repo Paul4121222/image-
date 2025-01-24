@@ -1,10 +1,11 @@
 const merge = require("webpack-merge").merge;
 const common = require("./webpack.common");
-
+const webpack = require("webpack");
 const proxyConfig = [
   {
     context: ["/api"],
-    target: "http://localhost:3000",
+    target: "http://127.0.0.1:3000",
+    changeOrigin: true,
   },
 ];
 module.exports = merge(common, {
@@ -15,5 +16,11 @@ module.exports = merge(common, {
     static: ["./dist"],
     historyApiFallback: true,
     proxy: proxyConfig,
+    hot: true,
   },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin({
+      multiStep: true,
+    }),
+  ],
 });

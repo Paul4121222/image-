@@ -68,7 +68,7 @@ const PhotoContainer = ({ size, setSize }) => {
                   height: item.displayHeight,
                 }}
                 isSelected={isSelected}
-                path={item.path}
+                path={`/api/list/${item._id}`}
                 onClick={() => {
                   if (isSelected) {
                     dispatch(removePhotoSelected(item.id));

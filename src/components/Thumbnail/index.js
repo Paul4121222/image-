@@ -2,6 +2,7 @@ import { useState } from "react";
 import { imgLoader } from "../../utility";
 import CheckBox from "../CheckBox";
 const Thumbnail = ({ path, style, isSelected, ...rest }) => {
+  console.log(path);
   const [isHover, setIsHover] = useState(false);
   return (
     <div
@@ -19,7 +20,7 @@ const Thumbnail = ({ path, style, isSelected, ...rest }) => {
     >
       <div
         style={{
-          backgroundImage: `url(${imgLoader(path)})`,
+          backgroundImage: `url(${path}})`,
           backgroundSize: "cover",
           width: "100%",
           height: "100%",

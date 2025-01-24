@@ -11,5 +11,22 @@ const statusCheck = (res) => {
 };
 
 export const apiGetPhotoList = () => {
-  return axios.get("/list").then(statusCheck);
+  return axios
+    .get("/list", {
+      params: {
+        _dc: Math.random(),
+      },
+    })
+    .then(statusCheck)
+    .then((list) => {
+      return [
+        {
+          segments: [
+            {
+              contents: list,
+            },
+          ],
+        },
+      ];
+    });
 };

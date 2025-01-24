@@ -27,8 +27,8 @@ class GridManager extends Component {
 
   getInitData = async () => {
     this.section = await this.props.getData();
-    console.log(this.section);
     const data = gridParser(this.section, this.props.config);
+    console.log(data);
     this.setState({
       data,
     });
