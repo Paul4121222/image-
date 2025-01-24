@@ -1,5 +1,4 @@
 import { Component } from "react";
-import { getData } from "../../container/PhotoContainer/apiTest";
 import gridParser from "./gridParser";
 
 class GridManager extends Component {
@@ -27,7 +26,8 @@ class GridManager extends Component {
   };
 
   getInitData = async () => {
-    this.section = await getData();
+    this.section = await this.props.getData();
+    console.log(this.section);
     const data = gridParser(this.section, this.props.config);
     this.setState({
       data,

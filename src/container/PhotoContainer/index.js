@@ -12,6 +12,7 @@ import {
   removePhotoSelected,
 } from "../../slices/photoSlice";
 import Thumbnail from "../../components/Thumbnail";
+import { apiGetPhotoList } from "../../utility/api";
 
 const PhotoContainer = ({ size, setSize }) => {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -146,6 +147,7 @@ const PhotoContainer = ({ size, setSize }) => {
                 <GridManager
                   config={{ ...config[size], containerWidth: width }}
                   renderKey={`${width}-${size}`}
+                  getData={apiGetPhotoList}
                 >
                   {({ data, registerList }) => {
                     return (
