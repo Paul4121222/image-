@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack serve --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
-    "server": "nodemon server/app.js",
+    "server": "nodemon server/app.js --ignore client",
     "dev-server": "concurrently \"npm run dev\" \"npm run server\""
   },
   "author": "",

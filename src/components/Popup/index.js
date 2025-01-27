@@ -7,17 +7,20 @@ const PopupContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 6px 0px;
   border-radius: 4px;
   z-index: 101;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
 `;
 
-const Popup = ({ children, width, height }) => {
+const Popup = ({ children, width, height, style = {} }) => {
   return (
     <PopupContainer
       style={{
         width,
         height,
-        left: "50%",
-        top: "50%",
-        transform: "translate(-50%,-50%",
+        ...style,
       }}
     >
       {children}
@@ -30,7 +33,7 @@ const Header = styled(({ children, className, close }) => {
     <div className={className}>
       {close ? (
         <div onClick={close} className="buttonWrapper">
-          X
+          x
         </div>
       ) : null}
       {children}
@@ -43,6 +46,8 @@ const Header = styled(({ children, className, close }) => {
   font-weight: bold;
   color: rgb(0, 0, 0);
   padding: 0px 30px;
+  display: flex;
+  align-items: center;
 
   .buttonWrapper {
     position: absolute;
@@ -53,5 +58,26 @@ const Header = styled(({ children, className, close }) => {
   }
 `;
 
+const Body = styled(({ children, className, ...rest }) => {
+  return (
+    <div className={className} {...rest}>
+      {children}
+    </div>
+  );
+})`
+  padding: 0 20px;
+  flex-grow: 1;
+`;
+
+const Footer = styled(({ children, className }) => {
+  return <div className={className}>{children}</div>;
+})`
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+`;
+
 Popup.Header = Header;
+Popup.Body = Body;
+Popup.Footer = Footer;
 export default Popup;

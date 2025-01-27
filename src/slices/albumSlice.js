@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   albumSelected: [],
   totalCount: 0,
+  reloadKey: Math.random(),
 };
 
 //combine reducer and action
@@ -26,8 +27,12 @@ const albumSlice = createSlice({
     setTotal(state, action) {
       state.totalCount = action.payload;
     },
+    setReloadKey(state) {
+      state.reloadKey = Math.random();
+    },
   },
 });
 
-export const { selectAlbum, cancelSelectAlbum, setTotal } = albumSlice.actions;
+export const { selectAlbum, cancelSelectAlbum, setTotal, setReloadKey } =
+  albumSlice.actions;
 export default albumSlice.reducer;

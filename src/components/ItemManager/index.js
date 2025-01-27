@@ -20,6 +20,7 @@ class ItemManager extends Component {
     getList: () => {},
     width: 0,
     setTotal: () => {},
+    addFirstItem: false,
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -55,6 +56,21 @@ class ItemManager extends Component {
       // When row height changes externally, let List know to reset its cached size
       this.infiniteLoader._registeredChild?.recomputeRowHeights();
     }
+
+    if (preProps.reloadKey !== this.props.reloadKey) {
+      this.props.getTotal().then(({ DataCount }) => {
+        this.props.setTotal(DataCount);
+        this.setState(
+          {
+            items: new Array(DataCount).fill(false),
+            total: DataCount,
+          },
+          () => {
+            this.infiniteLoader.resetLoadMoreRowsCache(true);
+          }
+        );
+      });
+    }
   }
 
   getInitData = () => {
@@ -74,10 +90,10 @@ class ItemManager extends Component {
   loadMoreRows = async ({ startIndex, stopIndex }) => {
     const list = await this.props
       .getList(startIndex, stopIndex)
-      .then((list) => {
-        return R.map(R.prop("FileItem"))(list);
+      .then(({ result }) => {
+        return result;
       });
-
+    console.log(list);
     this.setState({ items: list });
   };
 

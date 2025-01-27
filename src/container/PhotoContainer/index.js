@@ -1,5 +1,6 @@
 import { AutoSizer, List } from "react-virtualized";
 import { connect } from "react-redux";
+import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import GridManager from "../../components/GridManager";
@@ -13,10 +14,12 @@ import {
 } from "../../slices/photoSlice";
 import Thumbnail from "../../components/Thumbnail";
 import { apiGetPhotoList } from "../../utility/api";
-
-const PhotoContainer = ({ size, setSize }) => {
+import Button from "../../components/Button";
+import GridView from "../../components/GridView";
+const PhotoContainer = ({ size, setSize, reload, basicQuery = {}, back }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const dispatch = useDispatch();
+  const location = useLocation();
   const photoSelected = useSelector((state) => state.photo.photoSelected);
 
   const config = {
@@ -43,46 +46,6 @@ const PhotoContainer = ({ size, setSize }) => {
     },
   };
 
-  const rowRenderer =
-    (data) =>
-    ({ style, index, key }) => {
-      const row = data[index];
-      return (
-        <div
-          style={{
-            ...style,
-            height: row.displayHeight,
-            display: "flex",
-            alignItems: "flex-end",
-          }}
-          key={key}
-        >
-          {row.columns.map((item, index) => {
-            const isSelected = photoSelected.includes(item.id);
-            return (
-              <Thumbnail
-                key={index}
-                style={{
-                  marginLeft: index === 0 ? 0 : config[size].contentGap,
-                  width: item.displayWidth,
-                  height: item.displayHeight,
-                }}
-                isSelected={isSelected}
-                path={`/api/list/${item._id}`}
-                onClick={() => {
-                  if (isSelected) {
-                    dispatch(removePhotoSelected(item.id));
-                  } else {
-                    dispatch(addPhotoSelected(item.id));
-                  }
-                }}
-              />
-            );
-          })}
-        </div>
-      );
-    };
-
   return (
     <div
       style={{
@@ -102,7 +65,28 @@ const PhotoContainer = ({ size, setSize }) => {
         <Toolbar
           left={
             <div style={{ display: "flex", alignItems: "center" }}>
-              <h3 style={{ marginRight: "20px" }}>照片牆</h3>
+              {back ? (
+                <>
+                  <Button
+                    buttonType="icon"
+                    iconName="fill_back"
+                    iconWidth={20}
+                    iconHeight={20}
+                    onClick={back}
+                  />
+                  <div
+                    style={{
+                      width: "1px",
+                      height: "30px",
+                      backgroundColor: "rgb(233, 233, 233)",
+                      margin: "0px 10px",
+                    }}
+                  />
+                </>
+              ) : null}
+              <h3 style={{ marginRight: "20px" }}>
+                {location.state?.title || "照片牆"}
+              </h3>
             </div>
           }
           right={
@@ -140,32 +124,12 @@ const PhotoContainer = ({ size, setSize }) => {
             </SelectWithTooltip>
           }
         />
-        <AutoSizer>
-          {({ width, height }) => {
-            return (
-              width && (
-                <GridManager
-                  config={{ ...config[size], containerWidth: width }}
-                  renderKey={`${width}-${size}`}
-                  getData={apiGetPhotoList}
-                >
-                  {({ data, registerList }) => {
-                    return (
-                      <List
-                        ref={registerList}
-                        width={width}
-                        height={height}
-                        rowCount={data.length}
-                        rowHeight={({ index }) => data[index].displayHeight}
-                        rowRenderer={rowRenderer(data)}
-                      />
-                    );
-                  }}
-                </GridManager>
-              )
-            );
-          }}
-        </AutoSizer>
+        <GridView
+          config={config}
+          reload={reload}
+          basicQuery={basicQuery}
+          size={size}
+        />
       </div>
     </div>
   );
@@ -174,6 +138,7 @@ const PhotoContainer = ({ size, setSize }) => {
 export default connect(
   (state) => ({
     size: state.photo.size,
+    reload: state.photo.reload,
   }),
   (dispatch) => ({
     setSize: (val) => {

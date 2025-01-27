@@ -1,16 +1,27 @@
 import { InfiniteLoader, AutoSizer, List } from "react-virtualized";
+import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import ItemManager from "../../components/ItemManager";
-import { getAlbumsCount, getAlbumsList } from "./apiTest";
 import Toolbar from "../../components/Toolbar";
 import {
   selectAlbum,
   cancelSelectAlbum,
   setTotal,
+  setReloadKey,
 } from "../../slices/albumSlice";
+import {
+  apiGetAlbumsTotal,
+  apiGetAlbums,
+  apiCreateAlbum,
+} from "../../utility/api";
+import Button from "../../components/Button";
+import CreateAlbum from "../../components/CreateAlbum";
+import { PromiseHOC } from "../../Provider/PopupProvider";
+
+const PromiseCreateAlbum = PromiseHOC(CreateAlbum);
 
 const Album = ({ width, height, item, onClick, isAlbumSelected }) => {
-  const info = item ? `${item.PhotoCount} 相片 ${item.VideoCount} 影片` : "";
+  const info = item ? `${item.count} 相片` : "";
 
   return (
     <div
@@ -37,7 +48,7 @@ const Album = ({ width, height, item, onClick, isAlbumSelected }) => {
           transition: "border-width .2s",
         }}
       >
-        {item.cAlbumTitle}
+        {item.name}
       </div>
 
       <div
@@ -62,7 +73,11 @@ const AlbumContainer = ({
   cancelSelectAlbum,
   setTotal,
   albumTotal,
+  setReload,
+  reloadKey,
 }) => {
+  const navigate = useNavigate();
+
   const rowRenderer =
     ({ rows, albumWidth, selectAlbum, cancelSelectAlbum }) =>
     ({ index, key, style }) => {
@@ -84,10 +99,15 @@ const AlbumContainer = ({
                 height={albumWidth}
                 item={item}
                 onClick={() => {
-                  if (typeof item.iPhotoAlbumId === "undefined") return;
-                  isAlbumSelected
-                    ? cancelSelectAlbum(item.iPhotoAlbumId)
-                    : selectAlbum(item.iPhotoAlbumId);
+                  // if (typeof item.iPhotoAlbumId === "undefined") return;
+                  // isAlbumSelected
+                  //   ? cancelSelectAlbum(item.iPhotoAlbumId)
+                  //   : selectAlbum(item.iPhotoAlbumId);
+                  navigate(`/album/${item.id}`, {
+                    state: {
+                      title: item.name,
+                    },
+                  });
                 }}
               />
             );
@@ -111,6 +131,25 @@ const AlbumContainer = ({
             <h3 style={{ marginRight: "20px" }}>相簿</h3> {albumTotal}個
           </div>
         }
+        right={
+          <Button
+            buttonType="text"
+            onClick={() => {
+              PromiseCreateAlbum()
+                .then(({ unmount, photoSelected, name }) => {
+                  unmount();
+                  apiCreateAlbum({ photoSelected, name }).then(() => {
+                    setReload();
+                  });
+                })
+                .catch(({ unmount }) => {
+                  unmount();
+                });
+            }}
+          >
+            建立相簿
+          </Button>
+        }
       />
 
       <div style={{ flexGrow: 1 }}>
@@ -120,9 +159,11 @@ const AlbumContainer = ({
               <div style={{ marginLeft: "5px" }}>
                 <ItemManager
                   width={width - 5}
-                  getTotal={getAlbumsCount}
-                  getList={getAlbumsList}
+                  getTotal={apiGetAlbumsTotal}
+                  getList={apiGetAlbums}
                   setTotal={setTotal}
+                  addFirstItems
+                  reloadKey={reloadKey}
                 >
                   {({
                     rows,
@@ -174,6 +215,7 @@ const mapStateToProps = ({ album }) => {
   return {
     albumSelected: album.albumSelected,
     albumTotal: album.totalCount,
+    reloadKey: album.reloadKey,
   };
 };
 
@@ -184,6 +226,7 @@ const mapDispatchToProps = (dispatch) => {
     },
     cancelSelectAlbum: (val) => dispatch(cancelSelectAlbum(val)),
     setTotal: (val) => dispatch(setTotal(val)),
+    setReload: () => dispatch(setReloadKey()),
   };
 };
 

@@ -10,11 +10,12 @@ const statusCheck = (res) => {
   throw new Error();
 };
 
-export const apiGetPhotoList = () => {
+export const apiGetPhotoList = ({ albumId }) => {
   return axios
     .get("/list", {
       params: {
         _dc: Math.random(),
+        a: albumId,
       },
     })
     .then(statusCheck)
@@ -29,4 +30,35 @@ export const apiGetPhotoList = () => {
         },
       ];
     });
+};
+
+export const apiUploadPhoto = (file) => {
+  const formData = new FormData();
+  formData.append("image", file);
+  return axios.post("list", formData).then(statusCheck);
+};
+
+export const apiGetAlbumsTotal = () => {
+  return axios
+    .get("/album", {
+      params: {
+        t: "totalAlbums",
+      },
+    })
+    .then(statusCheck);
+};
+export const apiGetAlbums = () => {
+  return axios
+    .get("/album", {
+      params: {
+        t: "allAlbums",
+      },
+    })
+    .then(statusCheck);
+};
+
+export const apiCreateAlbum = ({ name, photoSelected }) => {
+  return axios
+    .post("/album", { name, images: photoSelected })
+    .then(statusCheck);
 };

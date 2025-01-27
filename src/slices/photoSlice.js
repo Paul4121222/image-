@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   photoSelected: [],
   size: "middle",
+  reload: Math.random(),
 };
 
 const photoSlice = createSlice({
@@ -21,9 +22,13 @@ const photoSlice = createSlice({
         (id) => id !== action.payload
       );
     },
+    handleReload(state) {
+      console.log(123);
+      state.reload = Math.random();
+    },
   },
 });
 
-export const { setSize, addPhotoSelected, removePhotoSelected } =
+export const { setSize, addPhotoSelected, removePhotoSelected, handleReload } =
   photoSlice.actions;
 export default photoSlice.reducer;
