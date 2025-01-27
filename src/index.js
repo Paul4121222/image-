@@ -12,7 +12,7 @@ const basename = isDev ? "/" : "/image-";
 
 root.render(
   <Provider store={store}>
-    <BrowserRouter basename={basename}>
+    <BrowserRouter>
       <PopupProvider>
         <Main />
       </PopupProvider>
