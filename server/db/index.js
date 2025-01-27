@@ -6,5 +6,5 @@ mongoose
     console.log("connect to database");
   })
   .catch((e) => {
-    console.log("fail connect");
+    console.log("fail connect", e);
   });
