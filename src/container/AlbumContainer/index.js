@@ -17,6 +17,7 @@ import {
 import Button from "../../components/Button";
 import CreateAlbum from "../../components/CreateAlbum";
 import { PromiseHOC } from "../../Provider/PopupProvider";
+import { cleanPhotoSelected } from "../../slices/photoSlice";
 
 const PromiseCreateAlbum = PromiseHOC(CreateAlbum);
 
@@ -140,6 +141,7 @@ const AlbumContainer = ({
                   unmount();
                   apiCreateAlbum({ photoSelected, name }).then(() => {
                     setReload();
+                    cleanPhotoSelected();
                   });
                 })
                 .catch(({ unmount }) => {
@@ -227,6 +229,7 @@ const mapDispatchToProps = (dispatch) => {
     cancelSelectAlbum: (val) => dispatch(cancelSelectAlbum(val)),
     setTotal: (val) => dispatch(setTotal(val)),
     setReload: () => dispatch(setReloadKey()),
+    cleanPhotoSelected: () => dispatch(cleanPhotoSelected()),
   };
 };
 

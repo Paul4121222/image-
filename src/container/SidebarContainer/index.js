@@ -1,7 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { cleanPhotoSelected } from "../../slices/photoSlice";
 import Icon from "../../components/Icon";
 const SideBarContainer = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const itemList = [
     {
       icon: "fill_photo_3",
@@ -57,6 +60,7 @@ const SideBarContainer = () => {
             <div
               key={index}
               onClick={() => {
+                dispatch(cleanPhotoSelected());
                 navigate(item.path);
               }}
               css={`

@@ -1,9 +1,7 @@
-import { AutoSizer, List } from "react-virtualized";
 import { connect } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import GridManager from "../../components/GridManager";
 import Toolbar from "../../components/Toolbar";
 import SelectWithTooltip from "../../components/SelectWithTooltip";
 import ViewSelector from "../../components/ViewSelector";
@@ -11,17 +9,27 @@ import {
   setSize,
   addPhotoSelected,
   removePhotoSelected,
+  cleanPhotoSelected,
 } from "../../slices/photoSlice";
-import Thumbnail from "../../components/Thumbnail";
-import { apiGetPhotoList } from "../../utility/api";
 import Button from "../../components/Button";
 import GridView from "../../components/GridView";
-const PhotoContainer = ({ size, setSize, reload, basicQuery = {}, back }) => {
+const PhotoContainer = ({
+  size,
+  setSize,
+  reload,
+  basicQuery = {},
+  back,
+  cleanPhotoSelected,
+}) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const dispatch = useDispatch();
   const location = useLocation();
-  const photoSelected = useSelector((state) => state.photo.photoSelected);
 
+  useEffect(() => {
+    return () => {
+      cleanPhotoSelected();
+    };
+  }, []);
   const config = {
     small: {
       containerWidth: window.innerWidth,
@@ -143,6 +151,9 @@ export default connect(
   (dispatch) => ({
     setSize: (val) => {
       dispatch(setSize(val));
+    },
+    cleanPhotoSelected: () => {
+      dispatch(cleanPhotoSelected());
     },
   })
 )(PhotoContainer);

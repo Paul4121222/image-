@@ -23,12 +23,19 @@ const photoSlice = createSlice({
       );
     },
     handleReload(state) {
-      console.log(123);
       state.reload = Math.random();
+    },
+    cleanPhotoSelected(state) {
+      state.photoSelected = [];
     },
   },
 });
 
-export const { setSize, addPhotoSelected, removePhotoSelected, handleReload } =
-  photoSlice.actions;
+export const {
+  setSize,
+  addPhotoSelected,
+  removePhotoSelected,
+  handleReload,
+  cleanPhotoSelected,
+} = photoSlice.actions;
 export default photoSlice.reducer;
