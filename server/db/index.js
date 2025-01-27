@@ -1,2 +1,10 @@
 const mongoose = require("mongoose");
-mongoose.connect(process.env.MONGODB_URL);
+console.log(process.env.MONGODB_URL);
+mongoose
+  .connect(process.env.MONGODB_URL)
+  .then((res) => {
+    console.log("connect to database");
+  })
+  .catch((e) => {
+    console.log("fail connect");
+  });
