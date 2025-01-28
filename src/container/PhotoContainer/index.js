@@ -10,9 +10,16 @@ import {
   addPhotoSelected,
   removePhotoSelected,
   cleanPhotoSelected,
+  handleReload,
 } from "../../slices/photoSlice";
 import Button from "../../components/Button";
 import GridView from "../../components/GridView";
+import { apiRemovePhoto } from "../../utility/api";
+import { PromiseHOC } from "../../Provider/PopupProvider";
+import Popup from "../../components/Popup";
+
+const PromiseConfirm = PromiseHOC(Popup.Confirm);
+
 const PhotoContainer = ({
   size,
   setSize,
@@ -20,6 +27,8 @@ const PhotoContainer = ({
   basicQuery = {},
   back,
   cleanPhotoSelected,
+  photoSelected,
+  handleReload,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const dispatch = useDispatch();
@@ -30,6 +39,7 @@ const PhotoContainer = ({
       cleanPhotoSelected();
     };
   }, []);
+
   const config = {
     small: {
       containerWidth: window.innerWidth,
@@ -71,6 +81,24 @@ const PhotoContainer = ({
         }}
       >
         <Toolbar
+          itemSelected={photoSelected}
+          cleanSelected={cleanPhotoSelected}
+          handleRemove={() => {
+            PromiseConfirm({
+              title: "要刪除檔案嗎",
+              msg: "確定要刪除嗎? 檔案將會移動到垃圾桶",
+              closeText: "取消",
+              submitText: "確定",
+            })
+              .then(({ unmount }) => {
+                unmount();
+                apiRemovePhoto({ ids: photoSelected }).then(() => {
+                  cleanPhotoSelected();
+                  handleReload();
+                });
+              })
+              .catch(({ unmount }) => unmount());
+          }}
           left={
             <div style={{ display: "flex", alignItems: "center" }}>
               {back ? (
@@ -147,6 +175,7 @@ export default connect(
   (state) => ({
     size: state.photo.size,
     reload: state.photo.reload,
+    photoSelected: state.photo.photoSelected,
   }),
   (dispatch) => ({
     setSize: (val) => {
@@ -155,5 +184,6 @@ export default connect(
     cleanPhotoSelected: () => {
       dispatch(cleanPhotoSelected());
     },
+    handleReload: () => dispatch(handleReload()),
   })
 )(PhotoContainer);

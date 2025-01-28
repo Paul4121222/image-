@@ -5,7 +5,7 @@ import Popup from "../Popup";
 import Button from "../Button";
 import Input from "../Input";
 const CreateAlbum = ({ close, size, reload, photoSelected, submit }) => {
-  const [name, setName] = useState("");
+  const [name, setName] = useState("New Album");
   const config = {
     small: {
       containerWidth: window.innerWidth,
@@ -35,7 +35,10 @@ const CreateAlbum = ({ close, size, reload, photoSelected, submit }) => {
       <Popup.Body>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div style={{ marginRight: "5px" }}>輸入名稱</div>
-          <Input onChange={(e) => setName(e.target.value)} />
+          <Input
+            onChange={(e) => setName(e.target.value)}
+            placeholder="New Album"
+          />
         </div>
 
         <GridView size={size} reload={reload} config={config} />

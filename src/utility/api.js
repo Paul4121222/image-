@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import * as R from "ramda";
 axios.defaults.baseURL = "/api";
 
 const statusCheck = (res) => {
@@ -32,7 +32,7 @@ export const apiGetPhotoList = ({ albumId }) => {
     });
 };
 
-export const apiUploadPhoto = (file) => {
+export const apiUploadPhoto = (file, name) => {
   const formData = new FormData();
   formData.append("image", file);
   return axios.post("list", formData).then(statusCheck);
@@ -47,6 +47,7 @@ export const apiGetAlbumsTotal = () => {
     })
     .then(statusCheck);
 };
+
 export const apiGetAlbums = () => {
   return axios
     .get("/album", {
@@ -61,4 +62,47 @@ export const apiCreateAlbum = ({ name, photoSelected }) => {
   return axios
     .post("/album", { name, images: photoSelected })
     .then(statusCheck);
+};
+
+export const apiRemovePhoto = ({ ids }) => {
+  return axios
+    .delete("/list", {
+      data: {
+        ids,
+        t: "remove",
+      },
+    })
+    .then(statusCheck);
+};
+
+export const apiDeleteItems = ({ ids }) => {
+  return axios
+    .delete("/list", {
+      data: {
+        t: "delete",
+        ids,
+      },
+    })
+    .then(statusCheck);
+};
+export const apiGetRemovePhotos = () => {
+  return axios
+    .get("/list", {
+      params: {
+        t: "remove",
+      },
+    })
+    .then(statusCheck)
+    .then(
+      R.map(
+        R.applySpec({
+          name: R.prop("name"),
+          dimension: R.pipe(
+            R.props(["width", "height"]),
+            ([width, height]) => `${width} x ${height}`
+          ),
+          id: R.prop("_id"),
+        })
+      )
+    );
 };

@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import Button from "../Button";
+import Icon from "../Icon";
 
 const PopupContainer = styled.div`
   position: fixed;
@@ -32,9 +34,14 @@ const Header = styled(({ children, className, close }) => {
   return (
     <div className={className}>
       {close ? (
-        <div onClick={close} className="buttonWrapper">
-          x
-        </div>
+        <Button
+          buttonType="icon"
+          iconName="fill_close"
+          iconWidth={16}
+          iconHeight={16}
+          onClick={close}
+          className="buttonWrapper"
+        />
       ) : null}
       {children}
     </div>
@@ -75,9 +82,54 @@ const Footer = styled(({ children, className }) => {
   display: flex;
   justify-content: flex-end;
   padding: 10px;
+
+  &>*{
+  &:not(:last-child){
+    margin-right: 10px;
+  }
 `;
+
+const Confirm = styled(
+  ({
+    style = { width: "400px", height: "160px" },
+    close,
+    title,
+    msg,
+    closeText,
+    submitText,
+    submit,
+  }) => {
+    return (
+      <Popup style={style}>
+        <Popup.Header close={close}>
+          <Icon
+            name="fill_warning"
+            width={36}
+            height={36}
+            style={{ marginRight: "8px" }}
+          />
+          {title}
+        </Popup.Header>
+        <Popup.Body style={{ paddingLeft: "74px" }}>{msg}</Popup.Body>
+        <Popup.Footer>
+          {submitText ? (
+            <Button buttonType="text" onClick={submit}>
+              {submitText}
+            </Button>
+          ) : null}
+          {closeText ? (
+            <Button buttonType="text" onClick={close}>
+              {closeText}
+            </Button>
+          ) : null}
+        </Popup.Footer>
+      </Popup>
+    );
+  }
+)``;
 
 Popup.Header = Header;
 Popup.Body = Body;
 Popup.Footer = Footer;
+Popup.Confirm = Confirm;
 export default Popup;

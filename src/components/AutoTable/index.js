@@ -1,5 +1,7 @@
 import { AutoSizer, Table, Column } from "react-virtualized";
 import { Component } from "react";
+import { apiGetRemovePhotos } from "../../utility/api";
+
 import "react-virtualized/styles.css";
 
 class CustomTable extends Component {
@@ -8,32 +10,10 @@ class CustomTable extends Component {
     height: 300,
     rowHeight: 30,
     width: 300,
-    list: [
-      {
-        name: "A",
-        path: "aaa/bbb",
-      },
-      {
-        name: "B",
-        path: "ccc/bbb",
-      },
-      {
-        name: "C",
-        path: "ddd/eee",
-      },
-    ],
-    columns: [
-      {
-        dataKey: "name",
-        title: "Name",
-        width: 80,
-      },
-      {
-        dataKey: "path",
-        title: "Path",
-        width: 100,
-      },
-    ],
+  };
+
+  state = {
+    list: [],
   };
 
   columnsRender = () => {
@@ -43,18 +23,35 @@ class CustomTable extends Component {
         label={column.title}
         dataKey={column.dataKey}
         width={column.width}
+        style={{ display: "flex", justifyContent: "center" }}
         cellRenderer={
           column.render &&
-          (() => {
-            return column.render({});
+          (({ rowIndex }) => {
+            return column.render({ row: this.state.list[rowIndex] });
           })
         }
       />
     ));
   };
 
+  getData = () => {
+    this.props.getData().then((list) => {
+      this.setState({
+        list,
+      });
+    });
+  };
+  componentDidMount() {
+    this.getData();
+  }
+
+  componentDidUpdate(preProps) {
+    if (preProps.reloadKey !== this.props.reloadKey) {
+      this.getData();
+    }
+  }
   render() {
-    const { width, height, headerHeight, rowHeight, list } = this.props;
+    const { width, height, headerHeight, rowHeight } = this.props;
 
     return (
       <Table
@@ -62,8 +59,9 @@ class CustomTable extends Component {
         height={height}
         headerHeight={headerHeight}
         rowHeight={rowHeight}
-        rowCount={list.length}
-        rowGetter={({ index }) => list[index]}
+        rowCount={this.state.list.length}
+        rowGetter={({ index }) => this.state.list[index]}
+        headerStyle={{ display: "flex", justifyContent: "center" }}
       >
         {this.columnsRender()}
       </Table>

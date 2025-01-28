@@ -18,6 +18,7 @@ const GridView = ({ config, reload, basicQuery = {}, size }) => {
             height: row.displayHeight,
             display: "flex",
             alignItems: "flex-end",
+            paddingLeft: "20px",
           }}
           key={key}
         >

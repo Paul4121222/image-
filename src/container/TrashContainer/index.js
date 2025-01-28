@@ -1,60 +1,112 @@
 import AutoTable from "../../components/AutoTable";
 import CheckBox from "../../components/CheckBox";
+import { apiGetRemovePhotos, apiDeleteItems } from "../../utility/api";
 import { useState } from "react";
-const list = [
-  {
-    name: "A",
-    path: "aaa/bbb",
-    date: "2014/7/8",
-  },
-  {
-    name: "B",
-    path: "ccc/bbb",
-    date: "2078/6/9",
-  },
-  {
-    name: "C",
-    path: "ddd/eee",
-    date: "1999/4/6",
-  },
-];
+import {
+  addToSelectedList,
+  cancelSelectedList,
+  cleanSelected,
+  handleReload,
+} from "../../slices/listSlice";
+import { useDispatch, useSelector } from "react-redux";
+import Toolbar from "../../components/Toolbar";
+import { PromiseHOC } from "../../Provider/PopupProvider";
+import Popup from "../../components/Popup";
+
+const PromiseConfirm = PromiseHOC(Popup.Confirm);
 
 const TrashContainer = () => {
   const [rowsActive, setRowsActive] = useState([]);
-
+  const dispatch = useDispatch();
+  const selectedList = useSelector((state) => state.list.selectedList);
+  const reloadKey = useSelector((state) => state.list.reloadKey);
   const columns = [
     {
-      dataKey: "",
-      title: "Checkbox",
-      width: 120,
-      render: ({}) => {
+      dataKey: "checked",
+      title: "",
+      width: 60,
+      render: ({ row }) => {
+        const checked = selectedList.includes(row.id);
         return (
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <CheckBox checked={true} onClick={() => {}} />
+            <CheckBox
+              checked={checked}
+              onClick={() => {
+                dispatch(
+                  checked
+                    ? cancelSelectedList(row.id)
+                    : addToSelectedList(row.id)
+                );
+              }}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      dataKey: "image",
+      title: "圖片",
+      width: 120,
+      render: ({ row }) => {
+        return (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src={`/api/list/${row.id}`}
+              width={60}
+              height={60}
+              style={{ objectFit: "cover" }}
+            />
           </div>
         );
       },
     },
     {
       dataKey: "name",
-      title: "Name",
-      width: 80,
+      title: "名稱",
+      width: 200,
     },
     {
-      dataKey: "date",
-      title: "Date",
-      width: 120,
-    },
-    {
-      dataKey: "path",
-      title: "Path",
+      dataKey: "dimension",
+      title: "尺寸",
       width: 120,
     },
   ];
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
-      <AutoTable columns={columns} list={list} />
+    <div style={{ flexGrow: 1, overflow: "hidden" }}>
+      <Toolbar
+        left={<h3>垃圾桶</h3>}
+        itemSelected={selectedList}
+        cleanSelected={() => dispatch(cleanSelected())}
+        handleRemove={() => {
+          PromiseConfirm({
+            title: "要永久刪除檔案嗎",
+            msg: "確定要刪除嗎? 檔案將會永久刪除",
+            closeText: "取消",
+            submitText: "確定",
+          })
+            .then(({ unmount }) => {
+              unmount();
+              apiDeleteItems({ ids: selectedList }).then(() => {
+                dispatch(cleanSelected());
+                dispatch(handleReload());
+              });
+            })
+            .catch(({ unmount }) => unmount());
+        }}
+      />
+      <AutoTable
+        columns={columns}
+        getData={apiGetRemovePhotos}
+        rowHeight={80}
+        reloadKey={reloadKey}
+      />
     </div>
   );
 };

@@ -16,6 +16,13 @@ const schema = new mongoose.Schema({
   format: {
     type: String,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  name: {
+    type: String,
+  },
 });
 const List = mongoose.model("List", schema);
 module.exports = List;

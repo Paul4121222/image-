@@ -76,6 +76,7 @@ const AlbumContainer = ({
   albumTotal,
   setReload,
   reloadKey,
+  cleanPhotoSelected,
 }) => {
   const navigate = useNavigate();
 

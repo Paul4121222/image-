@@ -1,7 +1,6 @@
 import Popup from "../Popup";
 import Button from "../Button";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { apiUploadPhoto } from "../../utility/api";
 const Upload = ({ close, submit }) => {
   const inputRef = useRef(null);
   const [files, setFiles] = useState([]);

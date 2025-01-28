@@ -21,7 +21,13 @@ const upload = multer({
 router.post("/list", upload.single("image"), async (req, res) => {
   try {
     const { width, height, format } = await sharp(req.file.buffer).metadata();
-    const list = new List({ image: req.file.buffer, width, height, format });
+    const list = new List({
+      image: req.file.buffer,
+      width,
+      height,
+      format,
+      name: req.file.originalname,
+    });
     await list.save();
     res.send({ success: true });
   } catch (e) {
@@ -30,14 +36,12 @@ router.post("/list", upload.single("image"), async (req, res) => {
 });
 
 router.get("/list", async (req, res) => {
-  let query = {};
+  const isDeleted = req.query.t === "remove";
+  let query = { isDeleted };
   if (req.query.a) {
     const album = await Album.findById(req.query.a);
-    console.log(album);
-    query = {
-      _id: {
-        $in: album?.images,
-      },
+    query["_id"] = {
+      $in: album?.images,
     };
   }
   const list = await List.find(query);
@@ -45,10 +49,64 @@ router.get("/list", async (req, res) => {
 });
 
 router.get("/list/:id", async (req, res) => {
-  console.log(req.params.id);
   const image = await List.findById(req.params.id);
   res.set("Content-Type", `image/${image.format}`);
   res.send(image.image);
 });
 
+//從資料庫移除
+// router.delete("/list", async (req, res) => {
+//   try {
+//     const list = await List.findByIdAndDelete(req.query.id);
+//     console.log(req.query.id);
+//     res.send(list);
+//   } catch (e) {
+//     res.status(500).send();
+//   }
+// });
+
+//批量移到垃圾桶
+router.delete("/list", async (req, res) => {
+  const { ids, t } = req.body;
+  try {
+    if (t === "remove") {
+      await List.updateMany(
+        {
+          _id: {
+            $in: ids,
+          },
+        },
+        {
+          isDeleted: true,
+        }
+      );
+      await Album.updateMany(
+        {
+          images: {
+            $in: ids,
+          },
+        },
+        {
+          $pull: {
+            images: {
+              $in: ids,
+            },
+          },
+        }
+      );
+    } else if (t === "delete") {
+      await List.deleteMany({
+        _id: {
+          $in: ids,
+        },
+      });
+    } else {
+      res.status(400).send();
+      return;
+    }
+    res.send({ success: true });
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 module.exports = router;

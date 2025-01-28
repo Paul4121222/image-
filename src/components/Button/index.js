@@ -19,14 +19,14 @@ const IconContainer = styled(CleanButton)`
   display: flex;
   justify-content: center;
   align-items: center;
-  ${({ hasHoverEffect, width, height }) =>
+  ${({ hasHoverEffect, width, height, hoverBackGroundColor }) =>
     hasHoverEffect &&
     `
     width: ${width}px;
     height: ${height}px;
     border-radius: ${width / 2}px;
     &:hover {
-      background: #f4faff;
+      background: ${hoverBackGroundColor || "#f4faff"};
     }
   `}
 `;
