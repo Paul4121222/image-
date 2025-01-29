@@ -22,4 +22,17 @@ router.get("/album", async (req, res) => {
     res.send({ result: albums });
   }
 });
+
+router.delete("/album", async (req, res) => {
+  try {
+    await Album.deleteMany({
+      _id: {
+        $in: req.body.ids,
+      },
+    });
+    res.send({ success: true });
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 module.exports = router;

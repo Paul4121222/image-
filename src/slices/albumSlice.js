@@ -23,6 +23,9 @@ const albumSlice = createSlice({
         (id) => id != action.payload
       );
     },
+    cleanSelectedAlbum(state) {
+      state.albumSelected = [];
+    },
     setTotal(state, action) {
       state.totalCount = action.payload;
     },
@@ -32,6 +35,11 @@ const albumSlice = createSlice({
   },
 });
 
-export const { selectAlbum, cancelSelectAlbum, setTotal, setReloadKey } =
-  albumSlice.actions;
+export const {
+  selectAlbum,
+  cancelSelectAlbum,
+  setTotal,
+  setReloadKey,
+  cleanSelectedAlbum,
+} = albumSlice.actions;
 export default albumSlice.reducer;

@@ -33,7 +33,7 @@ const GridView = ({ config, reload, basicQuery = {}, size }) => {
                   height: item.displayHeight,
                 }}
                 isSelected={isSelected}
-                path={`/api/list/${item._id}`}
+                path={`/api/images/${item._id}`}
                 onClick={() => {
                   if (isSelected) {
                     dispatch(removePhotoSelected(item._id));

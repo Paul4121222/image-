@@ -7,30 +7,57 @@ import {
   selectAlbum,
   cancelSelectAlbum,
   setTotal,
+  cleanSelectedAlbum,
   setReloadKey,
 } from "../../slices/albumSlice";
 import {
   apiGetAlbumsTotal,
   apiGetAlbums,
   apiCreateAlbum,
+  apiDeleteAlbums,
 } from "../../utility/api";
 import Button from "../../components/Button";
 import CreateAlbum from "../../components/CreateAlbum";
 import { PromiseHOC } from "../../Provider/PopupProvider";
 import { cleanPhotoSelected } from "../../slices/photoSlice";
+import CheckBox from "../../components/CheckBox";
+import Popup from "../../components/Popup";
 
 const PromiseCreateAlbum = PromiseHOC(CreateAlbum);
+const PromiseConfirm = PromiseHOC(Popup.Confirm);
 
-const Album = ({ width, height, item, onClick, isAlbumSelected }) => {
+const Album = ({
+  width,
+  height,
+  item,
+  onClick,
+  isAlbumSelected,
+  selectAlbum,
+  cancelSelectAlbum,
+}) => {
   const info = item ? `${item.count} 相片` : "";
 
   return (
     <div
       style={{
         margin: "0 15px 15px",
+        position: "relative",
       }}
       onClick={onClick}
     >
+      <CheckBox
+        checked={isAlbumSelected}
+        onClick={(e) => {
+          e.stopPropagation();
+          isAlbumSelected ? cancelSelectAlbum(item.id) : selectAlbum(item.id);
+        }}
+        style={{
+          position: "absolute",
+          top: "5px",
+          left: "5px",
+          fill: "#fff",
+        }}
+      />
       <div
         style={{
           cursor: "pointer",
@@ -77,6 +104,7 @@ const AlbumContainer = ({
   setReload,
   reloadKey,
   cleanPhotoSelected,
+  cleanSelectedAlbum,
 }) => {
   const navigate = useNavigate();
 
@@ -91,7 +119,7 @@ const AlbumContainer = ({
           style={{ ...style, display: "flex", alignItems: "center" }}
         >
           {row.map((item, index) => {
-            const isAlbumSelected = albumSelected.includes(item.iPhotoAlbumId);
+            const isAlbumSelected = albumSelected.includes(item.id);
 
             return (
               <Album
@@ -99,12 +127,14 @@ const AlbumContainer = ({
                 key={index}
                 width={albumWidth}
                 height={albumWidth}
+                selectAlbum={selectAlbum}
+                cancelSelectAlbum={cancelSelectAlbum}
                 item={item}
                 onClick={() => {
-                  // if (typeof item.iPhotoAlbumId === "undefined") return;
-                  // isAlbumSelected
-                  //   ? cancelSelectAlbum(item.iPhotoAlbumId)
-                  //   : selectAlbum(item.iPhotoAlbumId);
+                  if (isAlbumSelected) {
+                    cancelSelectAlbum(item.id);
+                    return;
+                  }
                   navigate(`/album/${item.id}`, {
                     state: {
                       title: item.name,
@@ -128,6 +158,24 @@ const AlbumContainer = ({
       }}
     >
       <Toolbar
+        itemSelected={albumSelected}
+        cleanSelected={cleanSelectedAlbum}
+        handleRemove={() => {
+          PromiseConfirm({
+            title: "要刪除相簿嗎",
+            msg: "相簿一旦刪除即無法復原，但當中的照片仍會保留",
+            closeText: "取消",
+            submitText: "確定",
+          })
+            .then(({ unmount }) => {
+              unmount();
+              apiDeleteAlbums({ ids: albumSelected }).then(() => {
+                cleanSelectedAlbum();
+                setReload();
+              });
+            })
+            .catch(({ unmount }) => unmount());
+        }}
         left={
           <div style={{ display: "flex", alignItems: "center" }}>
             <h3 style={{ marginRight: "20px" }}>相簿</h3> {albumTotal}個
@@ -231,6 +279,7 @@ const mapDispatchToProps = (dispatch) => {
     setTotal: (val) => dispatch(setTotal(val)),
     setReload: () => dispatch(setReloadKey()),
     cleanPhotoSelected: () => dispatch(cleanPhotoSelected()),
+    cleanSelectedAlbum: () => dispatch(cleanSelectedAlbum()),
   };
 };
 

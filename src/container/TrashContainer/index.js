@@ -57,7 +57,7 @@ const TrashContainer = () => {
             }}
           >
             <img
-              src={`/api/list/${row.id}`}
+              src={`/api/images/${row.id}`}
               width={60}
               height={60}
               style={{ objectFit: "cover" }}

@@ -12,7 +12,7 @@ const statusCheck = (res) => {
 
 export const apiGetPhotoList = ({ albumId }) => {
   return axios
-    .get("/list", {
+    .get("/images", {
       params: {
         _dc: Math.random(),
         a: albumId,
@@ -35,7 +35,7 @@ export const apiGetPhotoList = ({ albumId }) => {
 export const apiUploadPhoto = (file, name) => {
   const formData = new FormData();
   formData.append("image", file);
-  return axios.post("list", formData).then(statusCheck);
+  return axios.post("/images", formData).then(statusCheck);
 };
 
 export const apiGetAlbumsTotal = () => {
@@ -58,6 +58,16 @@ export const apiGetAlbums = () => {
     .then(statusCheck);
 };
 
+export const apiDeleteAlbums = ({ ids }) => {
+  return axios
+    .delete("/album", {
+      data: {
+        ids,
+      },
+    })
+    .then(statusCheck);
+};
+
 export const apiCreateAlbum = ({ name, photoSelected }) => {
   return axios
     .post("/album", { name, images: photoSelected })
@@ -66,10 +76,9 @@ export const apiCreateAlbum = ({ name, photoSelected }) => {
 
 export const apiRemovePhoto = ({ ids }) => {
   return axios
-    .delete("/list", {
+    .delete("/images", {
       data: {
         ids,
-        t: "remove",
       },
     })
     .then(statusCheck);
@@ -79,7 +88,6 @@ export const apiDeleteItems = ({ ids }) => {
   return axios
     .delete("/list", {
       data: {
-        t: "delete",
         ids,
       },
     })
@@ -87,11 +95,7 @@ export const apiDeleteItems = ({ ids }) => {
 };
 export const apiGetRemovePhotos = () => {
   return axios
-    .get("/list", {
-      params: {
-        t: "remove",
-      },
-    })
+    .get("/list")
     .then(statusCheck)
     .then(
       R.map(
