@@ -8,7 +8,8 @@
     "dev": "webpack serve --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "server": "nodemon server/app.js --ignore client",
-    "dev-server": "concurrently \"npm run dev\" \"npm run server\""
+    "dev-server": "concurrently \"npm run dev\" \"npm run server\"",
+    "build-server": "concurrently \"npm run build\" \"node server/app.js\""
   },
   "author": "",
   "license": "ISC",
