@@ -38,6 +38,12 @@ npm run dev-server
 To build the project for production, run:
 
 ```sh
+npm run build
+```
+
+Then, to start the production server, run:
+
+```sh
 npm run build-server
 ```
 
