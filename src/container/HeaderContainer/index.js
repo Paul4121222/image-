@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import Button from "../../components/Button";
 import Icon from "../../components/Icon";
 import { PromiseHOC } from "../../Provider/PopupProvider";
@@ -5,9 +6,14 @@ import Upload from "../../components/Upload";
 import { apiUploadPhoto } from "../../utility/api";
 import { handleReload } from "../../slices/photoSlice";
 import { useDispatch } from "react-redux";
-
+import { position } from "../../utility";
+import Message from "../../components/Message";
+import About from "../../components/About";
 const PromiseUpload = PromiseHOC(Upload);
+const PromiseAbout = PromiseHOC(About);
 const HeaderContainer = () => {
+  const moreBtnRef = useRef(null);
+
   const dispatch = useDispatch();
   return (
     <div
@@ -48,6 +54,7 @@ const HeaderContainer = () => {
         }}
       />
       <Button
+        ref={moreBtnRef}
         buttonType="icon"
         iconName="fill_more"
         width={36}
@@ -55,6 +62,15 @@ const HeaderContainer = () => {
         iconWidth={24}
         iconHeight={24}
         hasHoverEffect
+        onClick={() => {
+          Message({
+            message: "About",
+            target: moreBtnRef.current,
+            msgClick: () => {
+              PromiseAbout().catch(({ unmount }) => unmount());
+            },
+          }).catch(({ unmount }) => unmount());
+        }}
       />
     </div>
   );

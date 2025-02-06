@@ -20,3 +20,49 @@ export const debounce = (fn, delay) => {
     }, delay);
   };
 };
+
+export const position = ({
+  target,
+  at = { left: "left", top: "bottom" },
+  current,
+}) => {
+  const {
+    left: tLeft,
+    top: tTop,
+    width: tWidth,
+    height: tHeight,
+  } = target.getBoundingClientRect();
+  const { width: cWidth, height: cHeight } = current.getBoundingClientRect();
+
+  let newLeft = tLeft;
+  let newTop = tTop;
+
+  const [xLeft, xOffset = 0] = at.left
+    .split(/\+|\-/)
+    .map((item) => item.trim());
+  const [yTop, yOffset = 0] = at.top.split(/\+|\-/).map((item) => item.trim());
+
+  if (xLeft === "left") {
+    newLeft = newLeft + xOffset;
+  } else if (xLeft === "right") {
+    newLeft = tLeft + tWidth - cWidth - xOffset;
+  } else if (xLeft === "center") {
+    newLeft = tLeft + (tWidth - cWidth) / 2 + xOffset;
+  }
+
+  if (yTop === "bottom") {
+    newTop = tTop + tHeight + yOffset;
+  } else if (yTop === "top") {
+    newTop = tTop - cHeight - yOffset;
+  } else if (yTop === "middle") {
+    newTop = tTop + (tHeight - cHeight) / 2 + yOffset;
+  }
+
+  newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - cWidth));
+  newTop = Math.max(0, Math.min(newTop, window.innerHeight - cHeight));
+
+  return {
+    left: newLeft,
+    top: newTop,
+  };
+};

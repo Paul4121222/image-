@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { forwardRef } from "react";
 import Icon from "../Icon";
 
 const CleanButton = styled.button`
@@ -31,30 +32,39 @@ const IconContainer = styled(CleanButton)`
   `}
 `;
 
-const Button = ({
-  buttonType,
-  children,
-  iconName,
-  iconWidth,
-  iconHeight,
-  iconStyle,
-  ...rest
-}) => {
-  switch (buttonType) {
-    case "text":
-      return <ButtonContainer {...rest}>{children}</ButtonContainer>;
-    case "icon":
-      return (
-        <IconContainer {...rest}>
-          <Icon
-            name={iconName}
-            width={iconWidth}
-            height={iconHeight}
-            style={iconStyle}
-          />
-        </IconContainer>
-      );
+const Button = forwardRef(
+  (
+    {
+      buttonType,
+      children,
+      iconName,
+      iconWidth,
+      iconHeight,
+      iconStyle,
+      ...rest
+    },
+    ref
+  ) => {
+    switch (buttonType) {
+      case "text":
+        return (
+          <ButtonContainer ref={ref} {...rest}>
+            {children}
+          </ButtonContainer>
+        );
+      case "icon":
+        return (
+          <IconContainer ref={ref} {...rest}>
+            <Icon
+              name={iconName}
+              width={iconWidth}
+              height={iconHeight}
+              style={iconStyle}
+            />
+          </IconContainer>
+        );
+    }
   }
-};
+);
 
 export default Button;

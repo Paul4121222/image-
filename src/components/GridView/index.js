@@ -53,7 +53,7 @@ const GridView = ({ config, reload, basicQuery = {}, size }) => {
       {({ width, height }) =>
         width && (
           <GridManager
-            config={{ ...config[size], containerWidth: width }}
+            config={{ ...config[size], containerWidth: width - 20 }}
             renderKey={`${width}-${size}-${reload}`}
             getData={() => apiGetPhotoList(basicQuery)}
           >

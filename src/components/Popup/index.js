@@ -2,16 +2,18 @@ import styled from "styled-components";
 import Button from "../Button";
 import Icon from "../Icon";
 
-const PopupContainer = styled.div`
+export const PopupContainer = styled.div`
   position: fixed;
   background: rgb(255, 255, 255);
   border: 1px solid rgb(221, 221, 221);
   box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 6px 0px;
   border-radius: 4px;
   z-index: 101;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  ${({ left, top }) =>
+    left
+      ? `left: ${left}px; top:${top}px;`
+      : "left: 50%;top: 50%; transform: translate(-50%, -50%);"}
+
   display: flex;
   flex-direction: column;
 `;
@@ -132,4 +134,5 @@ Popup.Header = Header;
 Popup.Body = Body;
 Popup.Footer = Footer;
 Popup.Confirm = Confirm;
+
 export default Popup;

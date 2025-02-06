@@ -85,10 +85,10 @@ const PhotoContainer = ({
           cleanSelected={cleanPhotoSelected}
           handleRemove={() => {
             PromiseConfirm({
-              title: "要刪除檔案嗎",
-              msg: "確定要刪除嗎? 檔案將會移動到垃圾桶",
-              closeText: "取消",
-              submitText: "確定",
+              title: "Do you want to delete the file?",
+              msg: "Are you sure you want to delete it? The file will be moved to the trash.",
+              closeText: "Cancel",
+              submitText: "Confirm",
             })
               .then(({ unmount }) => {
                 unmount();
