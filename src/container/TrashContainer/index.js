@@ -45,7 +45,7 @@ const TrashContainer = () => {
     },
     {
       dataKey: "image",
-      title: "圖片",
+      title: "Picture",
       width: 120,
       render: ({ row }) => {
         return (
@@ -68,12 +68,12 @@ const TrashContainer = () => {
     },
     {
       dataKey: "name",
-      title: "名稱",
+      title: "Name",
       width: 200,
     },
     {
       dataKey: "dimension",
-      title: "尺寸",
+      title: "Dimension",
       width: 120,
     },
   ];
@@ -81,7 +81,7 @@ const TrashContainer = () => {
   return (
     <div style={{ flexGrow: 1, overflow: "hidden" }}>
       <Toolbar
-        left={<h3>垃圾桶</h3>}
+        left={<h3>Trash</h3>}
         itemSelected={selectedList}
         cleanSelected={() => dispatch(cleanSelected())}
         handleRemove={() => {

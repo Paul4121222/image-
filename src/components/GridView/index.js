@@ -55,7 +55,7 @@ const GridView = ({ config, reload, basicQuery = {}, size }) => {
           <GridManager
             config={{ ...config[size], containerWidth: width }}
             renderKey={`${width}-${size}-${reload}`}
-            getData={apiGetPhotoList(basicQuery)}
+            getData={() => apiGetPhotoList(basicQuery)}
           >
             {({ data, registerList }) => {
               return (

@@ -31,10 +31,10 @@ const CreateAlbum = ({ close, size, reload, photoSelected, submit }) => {
   };
   return (
     <Popup style={{ width: "800px", height: "600px" }}>
-      <Popup.Header close={close}>建立相簿</Popup.Header>
+      <Popup.Header close={close}>Create Album</Popup.Header>
       <Popup.Body>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ marginRight: "5px" }}>輸入名稱</div>
+          <div style={{ marginRight: "5px" }}>Input name</div>
           <Input
             onChange={(e) => setName(e.target.value)}
             placeholder="New Album"
@@ -53,10 +53,10 @@ const CreateAlbum = ({ close, size, reload, photoSelected, submit }) => {
             });
           }}
         >
-          建立
+          Create
         </Button>
         <Button buttonType="text" onClick={close}>
-          取消
+          Cancel
         </Button>
       </Popup.Footer>
     </Popup>

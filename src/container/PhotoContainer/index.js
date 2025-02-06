@@ -121,7 +121,7 @@ const PhotoContainer = ({
                 </>
               ) : null}
               <h3 style={{ marginRight: "20px" }}>
-                {location.state?.title || "照片牆"}
+                {location.state?.title || "Gallery"}
               </h3>
             </div>
           }
@@ -147,7 +147,7 @@ const PhotoContainer = ({
                     setShowTooltip(true);
                   }}
                 >
-                  檢視
+                  View
                 </div>
               }
             >

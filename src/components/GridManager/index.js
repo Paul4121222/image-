@@ -1,5 +1,6 @@
 import { Component } from "react";
 import gridParser from "./gridParser";
+import { debounce } from "../../utility";
 
 class GridManager extends Component {
   static defaultProps = {
@@ -15,9 +16,7 @@ class GridManager extends Component {
 
   componentDidUpdate(preProps) {
     if (preProps.renderKey !== this.props.renderKey) {
-      this.getInitData().then(() => {
-        this.list.recomputeRowHeights();
-      });
+      this.updateData();
     }
   }
 
@@ -26,13 +25,18 @@ class GridManager extends Component {
   };
 
   getInitData = async () => {
-    this.section = await this.props.getData;
+    this.section = await this.props.getData();
     const data = gridParser(this.section, this.props.config);
-    console.log(data);
     this.setState({
       data,
     });
   };
+
+  updateData = debounce(() => {
+    this.getInitData().then(() => {
+      this.list.recomputeRowHeights();
+    });
+  }, 2000);
 
   render() {
     return this.props.children({

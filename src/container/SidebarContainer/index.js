@@ -8,12 +8,12 @@ const SideBarContainer = () => {
   const itemList = [
     {
       icon: "fill_photo_3",
-      name: "多媒體藝廊",
+      name: "Gallery",
       path: "/",
     },
     {
       icon: "fill_album_2",
-      name: "相簿",
+      name: "Album",
       path: "/album",
     },
     {
@@ -21,7 +21,7 @@ const SideBarContainer = () => {
     },
     {
       icon: "fill_trash_2",
-      name: "垃圾桶",
+      name: "Trash",
       path: "/trash",
     },
   ];

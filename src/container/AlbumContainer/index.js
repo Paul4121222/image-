@@ -1,6 +1,7 @@
 import { InfiniteLoader, AutoSizer, List } from "react-virtualized";
 import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
+import { useEffect } from "react";
 import ItemManager from "../../components/ItemManager";
 import Toolbar from "../../components/Toolbar";
 import {
@@ -106,6 +107,11 @@ const AlbumContainer = ({
   cleanPhotoSelected,
   cleanSelectedAlbum,
 }) => {
+  useEffect(() => {
+    return () => {
+      cleanSelectedAlbum();
+    };
+  }, []);
   const navigate = useNavigate();
 
   const rowRenderer =
@@ -131,8 +137,10 @@ const AlbumContainer = ({
                 cancelSelectAlbum={cancelSelectAlbum}
                 item={item}
                 onClick={() => {
-                  if (isAlbumSelected) {
-                    cancelSelectAlbum(item.id);
+                  if (albumSelected.length) {
+                    isAlbumSelected
+                      ? cancelSelectAlbum(item.id)
+                      : selectAlbum(item.id);
                     return;
                   }
                   navigate(`/album/${item.id}`, {
@@ -162,10 +170,10 @@ const AlbumContainer = ({
         cleanSelected={cleanSelectedAlbum}
         handleRemove={() => {
           PromiseConfirm({
-            title: "要刪除相簿嗎",
-            msg: "相簿一旦刪除即無法復原，但當中的照片仍會保留",
-            closeText: "取消",
-            submitText: "確定",
+            title: "Do you want to delete the album?",
+            msg: "Once the album is deleted, it cannot be recovered, but the photos inside will remain.",
+            closeText: "Cancel",
+            submitText: "Confirm",
           })
             .then(({ unmount }) => {
               unmount();
@@ -178,7 +186,7 @@ const AlbumContainer = ({
         }}
         left={
           <div style={{ display: "flex", alignItems: "center" }}>
-            <h3 style={{ marginRight: "20px" }}>相簿</h3> {albumTotal}個
+            <h3 style={{ marginRight: "20px" }}>Album</h3> {albumTotal} Counts
           </div>
         }
         right={
@@ -198,7 +206,7 @@ const AlbumContainer = ({
                 });
             }}
           >
-            建立相簿
+            Create Album
           </Button>
         }
       />

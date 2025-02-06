@@ -12,7 +12,6 @@ const Upload = ({ close, submit }) => {
         return ["jpg", "jpeg", "png"].includes(format);
       });
 
-      console.log(newFiles);
       setFiles([...files, ...newFiles]);
     },
     [files]
@@ -24,6 +23,7 @@ const Upload = ({ close, submit }) => {
       <div></div>
       <Popup.Body style={{ display: "flex", flexDirection: "column" }}>
         <input
+          multiple
           ref={inputRef}
           type="file"
           style={{ display: "none" }}
