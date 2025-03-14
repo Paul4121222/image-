@@ -16,7 +16,6 @@ app.use("/api", albumRouter);
 app.use("/api", imageRouter);
 app.use(express.static(path.join(__dirname, "../dist")));
 app.get("*", (req, res) => {
-  console.log(88);
   res.sendFile(path.join(__dirname, "../dist/index.html"));
 });
 

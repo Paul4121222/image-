@@ -22,11 +22,9 @@ export const apiGetPhotoList = ({ albumId }) => {
     .then((list) => {
       return [
         {
-          segments: [
-            {
-              contents: list,
-            },
-          ],
+          segments: {
+            contents: list,
+          },
         },
       ];
     });
