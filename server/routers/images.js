@@ -3,6 +3,7 @@ const multer = require("multer");
 const List = require("../models/list");
 const sharp = require("sharp");
 const Album = require("../models/album");
+const embed = require('../jobs/queue')
 
 const router = new express.Router();
 
@@ -26,8 +27,14 @@ router.post("/images", upload.single("image"), async (req, res) => {
       height,
       format,
       name: req.file.originalname,
+      mime: req.file.mimetype,
     });
     await list.save();
+
+    await embed.add('photo', {
+      photoID: list._id.toString()
+    })
+
     res.send({ success: true });
   } catch (e) {
     res.status(500).send();

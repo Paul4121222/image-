@@ -23,6 +23,16 @@ const schema = new mongoose.Schema({
   name: {
     type: String,
   },
+  mime: {
+    type: String
+  },
+  embedStatus: {
+    type: String,
+    enum: ['wait', 'done'],
+  },
+  embed: {
+    type: [Number]
+  }
 });
 const List = mongoose.model("List", schema);
 module.exports = List;
