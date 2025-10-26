@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+  worker:
+    build: 
+      context: ./server
+      dockerfile: ./jobs/Dockerfile
+    container_name: worker
+    depends_on: 
+      - redis
+      - fastapi
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGODB_URL=mongodb://host.docker.internal:27017/mydb
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  fastapi:
+    build: ./ml
+    container_name: fastApi
+    command: python3 -m uvicorn main:app --reload
+    ports:
+     - "8000:8000"

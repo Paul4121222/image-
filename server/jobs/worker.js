@@ -6,8 +6,8 @@ const axios = require('axios')
 require('../db')
 
 const connection = {
-    host: '127.0.0.1',
-    port: 6379, //redis default port
+    host: process.env.REDIS_HOST || '127.0.0.1',
+    port: process.env.REDIS_PORT || 6379, //redis default port
 }
 
 //return值會存回redis
