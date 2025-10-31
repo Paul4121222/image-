@@ -9,7 +9,9 @@
     "build": "webpack --config webpack.prod.js",
     "server": "nodemon server/app.js --ignore client",
     "dev-server": "concurrently \"npm run dev\" \"npm run server\"",
-    "build-server": "node server/app.js"
+    "build-server": "node server/app.js",
+    "start": "node server/app.js",
+    "worker": "node server/jobs/worker.js"
   },
   "author": "",
   "license": "ISC",

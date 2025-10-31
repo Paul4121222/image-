@@ -25,8 +25,9 @@ const handleTask = async (job) => {
 
     formData.append('file', data, option);
 
-    const mlUrl = 'http://localhost:8000/embed';
-    const res = await axios.post(mlUrl, formData);
+    const mlUrl = process.env.ML_URL;
+    if(!mlUrl) throw new Error('ML_URL 未設定，無法呼叫 FastAPI /embed');
+    const res = await axios.post(mlUrl, formData, { headers: formData.getHeaders() });
     
     await List.findByIdAndUpdate(job.data.photoID, {
         embedStatus: 'done',
@@ -39,9 +40,9 @@ const handleTask = async (job) => {
 //要處理的queue / process task
 const worker = new Worker(EMBED_QUEUE, handleTask, { connection});
 
-worker.on('fail', (job) => {
-    console.error('❌ 任務失敗：', job.id, err);
-})
+worker.on('failed', (job, err) => {
+    console.error('❌ 任務失敗：', job?.id, err?.message);
+});
 
 worker.on('completed', job => {
   console.log('🎉 任務完成：', job.id);

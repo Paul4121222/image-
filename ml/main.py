@@ -1,25 +1,30 @@
-from fastapi import FastAPI, HTTPException, File, UploadFile
+from fastapi import FastAPI, File, UploadFile
 from transformers import CLIPProcessor, CLIPModel
 from PIL import Image
-import requests
 import torch
+import os
+
 app = FastAPI()
 
-#載入CLIP(版本)
-#這是透過上億張照片訓練出的模型，所以這邊等於載入大腦
-model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+model = None
+processor = None
+
+def load_model():
+    global model, processor
+    if model is None or processor is None:
+        model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+        processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+
+@app.get('/health')
+def health():
+    return {"status": "ok"}
 
 @app.post('/embed')
-def embed(file: UploadFile = File(...)):  #File: FastApi才知道要哪裡取得，這邊是從multipart/form-data讀取file欄位，...的意思是一定要有這欄位(file)
+def embed(file: UploadFile = File(...)):
+    load_model()  # lazy load on first request
     image = Image.open(file.file).convert("RGB")
     inputs = processor(images=image, return_tensors='pt')
-
     with torch.no_grad():
         feat = model.get_image_features(**inputs)
         feat = feat / feat.norm(p=2, dim=-1, keepdim=True)
-
     return {"embedding": feat.squeeze(0).tolist()}
-
-
-#miss /classify
