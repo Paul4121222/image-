@@ -18,6 +18,11 @@ def load_model():
         model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
         processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
+@app.on_event('startup')
+def init():
+    print('Init load model')
+    load_model()
+
 @app.get('/health')
 def health():
     return {"status": "ok"}
