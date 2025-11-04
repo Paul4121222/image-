@@ -1,6 +1,8 @@
 FROM python:3.10.12
 WORKDIR /work
+COPY requirement.txt .
+RUN pip install -r --no-cache-dir requirement.txt
 COPY . .
-RUN pip install fastapi torch pillow transformers uvicorn python-multipart
+ENV PORT=8080
 EXPOSE 8000
-CMD ["python3", "-m", "uvicorn", "main:app", "--reload"]
+CMD ["uvicorn", "main:app", "--port", "$PORT"]
