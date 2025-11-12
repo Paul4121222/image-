@@ -73,6 +73,7 @@ def load_model():
 async def lifespan(app: FastAPI):
     print('Init load model')
     cache = torch.load("label_cache.pt", map_location='cpu')
+    print(cache)
     app.state.labels = cache['labels']
     app.state.text_feat = cache['feat']
     yield
@@ -94,6 +95,7 @@ def embed(file: UploadFile = File(...)):
         feat = model.get_image_features(**inputs)
         feat = feat / feat.norm(p=2, dim=-1, keepdim=True)
     feat = feat.squeeze(0)
+    print(app.state.text_feat)
     top_result = suggest_top_text_label(feat, app.state.text_feat, app.state.labels, top_k=5)
     return {"embedding": feat.tolist(), "label": [item['label'] for item in top_result]}
 

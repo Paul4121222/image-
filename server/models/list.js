@@ -36,7 +36,7 @@ const schema = new mongoose.Schema(
       type: [Number],
     },
     keyLabel: {
-      type: String,
+      type: [String],
     },
   },
   {
