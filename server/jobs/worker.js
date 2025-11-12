@@ -35,6 +35,7 @@ const handleTask = async (job) => {
   await List.findByIdAndUpdate(job.data.photoID, {
     embedStatus: "done",
     embed: res.data.embedding,
+    keyLabel: res.data.label,
   });
 
   return { result: "done" };

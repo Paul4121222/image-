@@ -6,11 +6,61 @@ from transformers import CLIPProcessor, CLIPModel
 from PIL import Image
 import torch
 import os
+import csv
 
 app = FastAPI()
 
 model = None
 processor = None
+text_feat = None
+labels = None
+
+def load_labels(path='./dict.csv'):
+    labels = []
+    seen = set()
+    with open(path,newline='',encoding='utf-8') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if len(row) < 2:
+                continue
+            row_label = row[1].strip().lower()
+            if row_label in seen:
+                continue
+            labels.append(row_label)
+            seen.add(row_label)
+    return labels
+
+#先針對標籤集做embedding
+def build_label_embeddings():
+    global text_feat, labels
+    load_model()
+    labels = load_labels()
+    inputs = processor(text=labels, return_tensors='pt', padding=True)
+    with torch.no_grad():
+            text_feat = model.get_text_features(**inputs)
+            text_feat = text_feat / text_feat.norm(p=2, dim=-1, keepdim=True)
+    return text_feat, labels
+
+#選出語意最高的標籤
+def suggest_top_text_label(img_vector, text_feat, labels, top_k = 1):
+    sims = img_vector @ text_feat.T
+    values, indices = torch.topk(sims, k =top_k)
+    result = []
+    for v, idx in zip(values.tolist(), indices.tolist()):
+        result.append({
+            'label': labels[idx],
+            'score': v
+        })
+    return result
+
+def test_one_image(image_path):
+    image = Image.open(image_path).convert("RGB")
+    inputs = processor(images=image, return_tensors="pt")
+    with torch.no_grad():
+        feat = model.get_image_features(**inputs)
+        feat = feat / feat.norm(p=2, dim=-1, keepdim=True)
+    feat = feat.squeeze(0)  # (512,)
+    return suggest_top_text_label(feat, text_feat, labels, top_k=5)
 
 def load_model():
     global model, processor
@@ -22,6 +72,7 @@ def load_model():
 def init():
     print('Init load model')
     load_model()
+    build_label_embeddings()
 
 @app.get('/health')
 def health():
@@ -31,11 +82,13 @@ def health():
 def embed(file: UploadFile = File(...)):
     load_model()  # lazy load on first request
     image = Image.open(file.file).convert("RGB")
-    inputs = processor(images=image, return_tensors='pt')
+    inputs = processor(images=image, return_tensors='pt', padding=True)
     with torch.no_grad():
         feat = model.get_image_features(**inputs)
         feat = feat / feat.norm(p=2, dim=-1, keepdim=True)
-    return {"embedding": feat.squeeze(0).tolist()}
+    feat = feat.squeeze(0)
+    top_result = suggest_top_text_label(feat, text_feat, labels, top_k=5)
+    return {"embedding": feat.tolist(), "label": [item['label'] for item in top_result]}
 
 
 class EmbedURLRequest(BaseModel):
@@ -67,3 +120,9 @@ def embed_url(payload: EmbedURLRequest):
         feat = model.get_image_features(**inputs)
         feat = feat / feat.norm(p=2, dim=-1, keepdim=True)
     return {"embedding": feat.squeeze(0).tolist(), "source_url": str(payload.url)}
+
+if __name__ == "__main__":
+    load_model()
+    build_label_embeddings()
+    result = test_one_image('a.jpg')
+    print(result)

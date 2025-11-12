@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { imgLoader } from "../../utility";
 import CheckBox from "../CheckBox";
-const Thumbnail = ({ path, style, isSelected, ...rest }) => {
+const Thumbnail = ({ path, style, isSelected, label, ...rest }) => {
   const [isHover, setIsHover] = useState(false);
   return (
     <div
@@ -35,6 +35,20 @@ const Thumbnail = ({ path, style, isSelected, ...rest }) => {
             fill: "#fff",
           }}
         />
+      ) : null}
+      {label ? (
+        <div
+          style={{
+            position: "absolute",
+            right: "5px",
+            bottom: "5px",
+            background: "#fff",
+            padding: "0 2px",
+            borderRadius: "2px",
+          }}
+        >
+          {label}
+        </div>
       ) : null}
     </div>
   );

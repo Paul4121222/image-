@@ -7,6 +7,7 @@ import { addPhotoSelected, removePhotoSelected } from "../../slices/photoSlice";
 const GridView = ({ config, reload, basicQuery = {}, size }) => {
   const photoSelected = useSelector((state) => state.photo.photoSelected);
   const dispatch = useDispatch();
+
   const rowRenderer =
     (data) =>
     ({ style, index, key }) => {
@@ -33,6 +34,7 @@ const GridView = ({ config, reload, basicQuery = {}, size }) => {
                   height: item.displayHeight,
                 }}
                 isSelected={isSelected}
+                label={item.keyLabel}
                 path={`/api/images/${item._id}`}
                 onClick={() => {
                   if (isSelected) {
