@@ -27,6 +27,6 @@ with torch.inference_mode():
     feat = feat / feat.norm(dim=-1, keepdim=True)
 
 #feat.half()體積縮小，轉成float32
-torch.save({"labels": labels, "feat": feat.half()}, "label_cache.pt")
+torch.save({"labels": labels, "feat": feat}, "label_cache.pt")
 
 print("✅  Saved label_cache.pt  (", feat.shape, ")")
