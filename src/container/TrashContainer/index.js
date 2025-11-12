@@ -79,7 +79,14 @@ const TrashContainer = () => {
   ];
 
   return (
-    <div style={{ flexGrow: 1, overflow: "hidden" }}>
+    <div
+      style={{
+        flexGrow: 1,
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Toolbar
         left={<h3>Trash</h3>}
         itemSelected={selectedList}
@@ -101,12 +108,14 @@ const TrashContainer = () => {
             .catch(({ unmount }) => unmount());
         }}
       />
-      <AutoTable
-        columns={columns}
-        getData={apiGetRemovePhotos}
-        rowHeight={80}
-        reloadKey={reloadKey}
-      />
+      <div style={{ flex: 1, overflow: "hidden" }}>
+        <AutoTable
+          columns={columns}
+          getData={apiGetRemovePhotos}
+          rowHeight={80}
+          reloadKey={reloadKey}
+        />
+      </div>
     </div>
   );
 };

@@ -52,7 +52,7 @@ class CustomTable extends Component {
   }
   render() {
     const { width, height, headerHeight, rowHeight } = this.props;
-
+    console.log(height);
     return (
       <Table
         width={width}
