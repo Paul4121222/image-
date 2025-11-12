@@ -34,7 +34,7 @@ const GridView = ({ config, reload, basicQuery = {}, size }) => {
                   height: item.displayHeight,
                 }}
                 isSelected={isSelected}
-                label={item.keyLabel}
+                label={item.keyLabel[0]}
                 path={`/api/images/${item._id}`}
                 onClick={() => {
                   if (isSelected) {
