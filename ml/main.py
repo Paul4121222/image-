@@ -7,8 +7,8 @@ from PIL import Image
 import torch
 import os
 import csv
+from contextlib import asynccontextmanager
 
-app = FastAPI()
 
 model = None
 processor = None
@@ -68,11 +68,17 @@ def load_model():
         model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
         processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
-@app.on_event('startup')
-def init():
+#建立非同步管理器
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     print('Init load model')
     load_model()
     build_label_embeddings()
+    yield
+    print('Delete model')
+
+app = FastAPI(lifespan=lifespan)
+
 
 @app.get('/health')
 def health():
