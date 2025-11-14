@@ -10,10 +10,6 @@ const schema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    image: {
-      type: Buffer,
-      required: true,
-    },
     format: {
       type: String,
     },
@@ -37,6 +33,10 @@ const schema = new mongoose.Schema(
     },
     keyLabel: {
       type: [String],
+    },
+    fileId: {
+      required: true,
+      type: mongoose.Types.ObjectId,
     },
   },
   {

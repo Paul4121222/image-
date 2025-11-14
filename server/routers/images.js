@@ -4,6 +4,9 @@ const List = require("../models/list");
 const sharp = require("sharp");
 const Album = require("../models/album");
 const embed = require("../jobs/queue");
+const db = require("../db");
+const { Readable } = require("stream");
+const mongoose = require("mongoose");
 
 const router = new express.Router();
 
@@ -20,10 +23,14 @@ const upload = multer({
 
 router.post("/images", upload.single("image"), async (req, res) => {
   try {
-    console.log(req.file);
     const { width, height, format } = await sharp(req.file.buffer).metadata();
+    const uploadStream = db.bucket.openUploadStream(req.file.originalname, {
+      contentType: req.file.mimetype,
+    });
+    const readableStream = Readable.from(req.file.buffer);
+    readableStream.pipe(uploadStream);
     const list = new List({
-      image: req.file.buffer,
+      fileId: uploadStream.id, //儲存GridFs的file id
       width,
       height,
       format,
@@ -57,8 +64,22 @@ router.get("/images", async (req, res) => {
 
 router.get("/images/:id", async (req, res) => {
   const image = await List.findById(req.params.id);
+  const fileId = image.fileId;
+
+  //find  GridFs file
+  const objectFileId = new mongoose.Types.ObjectId(fileId);
+  //return cursor，指向結果的指標，檔案還在資料庫
+  const cursor = db.bucket.find({ _id: objectFileId });
+  //get all data
+  const file = await cursor.toArray();
+  if (!file.length) return res.status(404).send("File not found");
+
+  //其實是readAbleStream
+  const downloadStream = db.bucket.openDownloadStream(fileId);
+
   res.set("Content-Type", `image/${image.format}`);
-  res.send(image.image);
+
+  downloadStream.pipe(res);
 });
 
 router.delete("/images", async (req, res) => {
