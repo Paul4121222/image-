@@ -3,7 +3,7 @@ const { Worker } = require("bullmq");
 const List = require("../models/list");
 const FormData = require("form-data");
 const axios = require("axios");
-require("../db");
+const db = require("../db");
 
 const connection = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -17,14 +17,15 @@ const handleTask = async (job) => {
   if (!photo) throw new Error("找不到圖片");
 
   const formData = new FormData();
-  const data = photo.image;
+  const fileId = photo.fileId;
+  const downloadStream = db.bucket.openDownloadStream(fileId);
 
   const option = {
     filename: photo.name,
     contentType: photo.mime,
   };
 
-  formData.append("file", data, option);
+  formData.append("file", downloadStream, option);
 
   const mlUrl = process.env.ML_URL;
   if (!mlUrl) throw new Error("ML_URL 未設定，無法呼叫 FastAPI /embed");
