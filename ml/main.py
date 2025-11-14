@@ -72,10 +72,8 @@ def load_model():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print('Init load model')
-    load_model()  # lazy load on first request
 
     cache = torch.load("label_cache.pt", map_location='cpu')
-    print(cache)
     app.state.labels = cache['labels']
     app.state.text_feat = cache['feat']
     yield
@@ -90,6 +88,8 @@ def health():
 
 @app.post('/embed')
 def embed(file: UploadFile = File(...)):
+    load_model()  # lazy load on first request
+
     image = Image.open(file.file).convert("RGB")
     inputs = processor(images=image, return_tensors='pt', padding=True)
     with torch.no_grad():
