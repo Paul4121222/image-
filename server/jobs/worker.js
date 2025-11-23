@@ -43,7 +43,7 @@ const handleTask = async (job) => {
 };
 
 //要處理的queue / process task
-const worker = new Worker(EMBED_QUEUE, handleTask, process.env.REDIS_URL ? new Redis(process.env.REDIS_URL) : { connection });
+const worker = new Worker(EMBED_QUEUE, handleTask, process.env.REDIS_URL ? {connection: new Redis(process.env.REDIS_URL,  { maxRetriesPerRequest: null }) }: { connection });
 
 worker.on("failed", (job, err) => {
   console.error("❌ 任務失敗：", job?.id, err?.message);

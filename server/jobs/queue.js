@@ -8,6 +8,6 @@ const connection = {
   password: process.env.REDIS_PASSWORD,
 };
 
-const embed = process.env.REDIS_URL ? new Queue(EMBED_QUEUE, new Redis(process.env.REDIS_URL)) : new Queue(EMBED_QUEUE, { connection });
+const embed = process.env.REDIS_URL ? new Queue(EMBED_QUEUE, {connection: new Redis(process.env.REDIS_URL,  { maxRetriesPerRequest: null })}) : new Queue(EMBED_QUEUE, { connection });
 
 module.exports = embed;
