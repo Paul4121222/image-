@@ -7,6 +7,6 @@ const connection = {
   password: process.env.REDIS_PASSWORD,
 };
 
-const embed = new Queue(EMBED_QUEUE, { connection });
+const embed = process.env.REDIS_URL?new Queue(EMBED_QUEUE, process.env.REDIS_URL) : new Queue(EMBED_QUEUE, { connection });
 
 module.exports = embed;
