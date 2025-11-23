@@ -5,6 +5,8 @@ const FormData = require("form-data");
 const axios = require("axios");
 const db = require("../db");
 const Redis = require('ioredis')
+const express = require('express');
+
 const connection = {
   host: process.env.REDIS_HOST || "127.0.0.1",
   port: process.env.REDIS_PORT || 6379, //redis default port
@@ -52,3 +54,10 @@ worker.on("failed", (job, err) => {
 worker.on("completed", (job) => {
   console.log("🎉 任務完成：", job.id);
 });
+
+
+// ---- Dummy HTTP server 供 Render 掃 port ----
+const app = express();
+app.get('/healthz', (_, res) => res.send('ok'));
+const PORT = process.env.PORT || 10000;   // Render 預設 $PORT=10000
+app.listen(PORT, '0.0.0.0', () => console.log('dummy server on', PORT));
