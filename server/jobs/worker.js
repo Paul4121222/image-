@@ -6,6 +6,8 @@ const axios = require("axios");
 const db = require("../db");
 const Redis = require('ioredis')
 const express = require('express');
+const mongoose = require("mongoose");
+
 
 const connection = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -15,6 +17,12 @@ const connection = {
 
 //return值會存回redis
 const handleTask = async (job) => {
+  if (mongoose.connection.readyState !== 1) {
+        console.log("Redis task detected DB disconnect. Reconnecting...");
+        await mongoose.connect(process.env.MONGODB_URL);
+    }
+
+
   const photo = await List.findById(job.data.photoID);
   if (!photo) throw new Error("找不到圖片");
 
