@@ -4,7 +4,7 @@ const List = require("../models/list");
 const FormData = require("form-data");
 const axios = require("axios");
 const db = require("../db");
-
+const Redis = require('ioredis')
 const connection = {
   host: process.env.REDIS_HOST || "127.0.0.1",
   port: process.env.REDIS_PORT || 6379, //redis default port
@@ -43,7 +43,7 @@ const handleTask = async (job) => {
 };
 
 //要處理的queue / process task
-const worker = new Worker(EMBED_QUEUE, handleTask, process.env.REDIS_URL? process.env.REDIS_URL : { connection });
+const worker = new Worker(EMBED_QUEUE, handleTask, process.env.REDIS_URL ? new Redis(process.env.REDIS_URL) : { connection });
 
 worker.on("failed", (job, err) => {
   console.error("❌ 任務失敗：", job?.id, err?.message);

@@ -1,5 +1,6 @@
 const { Queue } = require("bullmq");
 const { EMBED_QUEUE } = require("./name");
+const Redis = require('ioredis')
 
 const connection = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -7,6 +8,6 @@ const connection = {
   password: process.env.REDIS_PASSWORD,
 };
 
-const embed = process.env.REDIS_URL?new Queue(EMBED_QUEUE, process.env.REDIS_URL) : new Queue(EMBED_QUEUE, { connection });
+const embed = process.env.REDIS_URL ? new Queue(EMBED_QUEUE, new Redis(process.env.REDIS_URL)) : new Queue(EMBED_QUEUE, { connection });
 
 module.exports = embed;
